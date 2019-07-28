@@ -1,0 +1,10 @@
+{% load i18n %}{% autoescape off %}
+{% blocktrans %}Ai primit acest email deoarece ai cerut creeare unui cont la {{ site_name }}.{% endblocktrans %}
+
+{% trans "Acceseaza linkul urmator pentru a activa contul:" %}
+{% block reset_link %}
+{{ protocol }}://{{ domain }}{% url 'activate' uidb64=uid token=token %}
+{% endblock %}
+
+{% blocktrans %}Echipa {{ site_name }}  {% endblocktrans %}
+{% endautoescape %}

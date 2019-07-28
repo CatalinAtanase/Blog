@@ -1,0 +1,63 @@
+{% extends "accounts/template.html" %}
+{% load widget_tweaks %}
+
+
+{% block content %}
+<div class="content-section">
+    <div class="media">
+        <img class="rounded-circle account-img" src="{{user.profile.image.url}}" alt="User Profile">
+        <div class="media-body">
+            <h2 class="account-heading">{{user.username}}</h2>
+            <!-- <p class="text-secondary">{{user.email}}</p> -->
+        </div>
+    </div>
+    <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <legend>Your profile</legend>
+
+        <!-- Show error messages -->
+        {% for field in user_form %}
+        {% for error in field.errors %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{error}}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        {% endfor %}
+        {% endfor %}
+
+        {% for field in profile_form %}
+        {% for error in field.errors %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{error}}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        {% endfor %}
+        {% endfor %}
+
+        <!-- Show forms -->
+        {% for field in user_form %}
+        <div class="form-group">
+            {{field.label_tag}} <br>
+            {% render_field field class="form-control"%}
+        </div>
+        {% endfor %}
+
+
+        {% for field in profile_form %}
+        <div class="form-group"></div>
+        {{field.label_tag}} <br>
+        {% render_field field class="" %}
+
+        {% endfor %}
+
+
+        <div class="form-group">
+            <button class="btn btn-outline-info my-4" type="submit"> Update </button>
+        </div>
+    </form>
+</div>
+{% endblock content %}

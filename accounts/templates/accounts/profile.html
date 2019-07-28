@@ -1,0 +1,14 @@
+{% extends "accounts/template.html" %}
+{% load widget_tweaks %}
+
+
+{% block content %}
+<div class="content-section">
+    <div class="media">
+        <img class="rounded-circle account-img" src="{{users_profile.profile.image.url}}" alt="User Profile">
+        <div class="media-body">
+            <h2 class="account-heading">{{users_profile.username}}</h2>
+        </div>
+    </div>
+</div>
+{% endblock content %}
