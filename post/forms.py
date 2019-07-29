@@ -1,16 +1,32 @@
 from django import forms
-from .models import Post
+from .models import Post, Comment, Reply
 
-# class PostForm(forms.ModelForm):
-#     # title = forms.CharField(max_length=100, label='Title')
-#     # description = forms.CharField(max_length=255, label='Description', help_text='Let others know what this post is about')
-#     # body = forms.CharField(widget=forms.Textarea)
-    
-#     class Meta:
-#         model = Post
-#         fields = [
-#             'title',
-#             'description',
-#             'body',
-#         ]
 
+class CommentForm(forms.ModelForm):
+
+    my_default_errors = {
+        'required': 'Trb sa completezi cumetre',
+        'invalid': 'Enter a valid value',
+    }
+
+    body = forms.CharField(widget=forms.Textarea(attrs={'rows': 10}), error_messages=my_default_errors)
+
+
+    class Meta:
+        model = Comment
+        fields = ('body',)
+
+
+class ReplyForm(forms.ModelForm):
+
+    my_default_errors = {
+        'required': 'Trb sa completezi cumetre',
+        'invalid': 'Enter a valid value',
+    }
+
+    body = forms.CharField(widget=forms.Textarea(attrs={'rows': 5}), error_messages=my_default_errors)
+
+
+    class Meta:
+        model = Reply
+        fields = ('body',)

@@ -17,15 +17,37 @@ class Post(models.Model):
         return self.title
     
     def get_absolute_url(self):
-        return reverse('profile', kwargs={'username': self.user.username})
+        return reverse('post_detail', kwargs={'pk': self.id})
 
 class Comment(models.Model):
 
     body = models.TextField()
-    post = models.ForeignKey(Post, on_delete=models.CASCADE)
-    reply_to = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE, related_name='replies')
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='comments_post')
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='comment_user')
 
     def __str__(self):
-        return self.user.username
-        
+        return self.body
+
+    def get_absolute_url(self):
+        return reverse('post_detail', kwargs={'pk': self.post.id})
+
+
+class Reply(models.Model):
+    body = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name='reply_comments')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='reply_user')
+
+    class Meta:
+        verbose_name_plural = "replies"
+
+    def __str__(self):
+        return f'{self.user.username}'
+
+    def get_absolute_url(self):
+        return reverse('post_detail', kwargs={'pk': self.comment.post.pk})
+
+    

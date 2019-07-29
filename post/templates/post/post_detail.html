@@ -1,15 +1,17 @@
 {% extends "accounts/template.html" %}
+{% load widget_tweaks %}
+
 {% block content %}
 <article class="media content-section">
     <div class="media-body">
         <div class="article-metadata">
-            <a class="mr-2" href="{% url 'profile' post.user.username %}">{{ post.user.username }}</a>
-            <small class="text-muted">{{ post.created_at|date:'F d Y' }}</small>
+            <a href="{% url 'profile' post.user.username %}" class="mr-2">{{ post.user.username }}</a>
+            <small class="text-muted">{{ post.updated_at|date:'F d Y' }}</small>
             {% if post.user == user %}
-                <div>
-                    <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'post_update' post.id %}">Update</a>
-                    <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'post_delete' post.id %}">Delete</a>
-                </div>
+            <div>
+                <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'post_update' post.id %}">Update</a>
+                <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'post_delete' post.id %}">Delete</a>
+            </div>
             {% endif %}
         </div>
         <h2 class="article-title">{{ post.title }} </h2>
@@ -17,10 +19,114 @@
     </div>
 </article>
 
-{% for comment in comments  %}
-    
-<h2>{{comment.body}}</h2>
-<h2>{{pk}}</h2>
+<div id="comments">
 
-{% endfor %}
+    <h2>Comments:</h2>
+    {% for comment in post.comments_post.all reversed %}
+    <article class="media content-section mt-2">
+        <div class="media-body">
+            <div class="article-metadata">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div class="about">
+                        <a href="{% url 'profile' comment.user.username %}" class="mr-2"> {{comment.user.username}}</a>
+                        <small class="text-muted ">{{ comment.updated_at|date:'F d Y' }}</small>
+                    </div>
+                    {% if comment.user == user %}
+                    <div class="" style="text-align: right;">
+                        <a class="btn btn-secondary btn-sm mt-1 mb-1"
+                            href="{% url 'comment_update' comment.id %}">Update</a>
+                        <a class="btn btn-danger btn-sm mt-1 mb-1"
+                            href="{% url 'comment_delete' comment.id %}">Delete</a>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            <p class="article-content">{{ comment.body }}</p>
+            <div class="replies-container mt-4">
+                {% for reply in comment.reply_comments.all %}
+                <article class="media content-section mt-2">
+                    <div class="media-body">
+                        <div class="article-metadata">
+                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div class="about">
+                                    <a href="{% url 'profile' reply.user.username %}" class="mr-2">
+                                        {{reply.user.username}}</a>
+                                    <small class="text-muted ">{{ reply.updated_at|date:'F d Y' }}</small>
+                                </div>
+                                {% if reply.user == user %}
+                                <div class="" style="text-align: right;">
+                                    <a class="btn btn-secondary btn-sm mt-1 mb-1"
+                                        href="{% url 'reply_update' reply.id %}">Update</a>
+                                    <a class="btn btn-danger btn-sm mt-1 mb-1"
+                                        href="{% url 'reply_delete' reply.id %}">Delete</a>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <p class="article-content">{{ reply.body }}</p>
+                    </div>
+                </article>
+                {% endfor %}
+            </div>
+            <div id="replies" class="mt-4">
+                <form action="{% url 'reply_create' comment.id post.id %}" method="post">
+                    {% csrf_token %}
+                    <legend>Add a reply</legend>
+                    {% for field in reply_form %}
+                    {% for error in field.errors  %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        {{error}}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    {% endfor %}
+                    {% endfor %}
+
+                    {% for field in reply_form  %}
+                    <div class="form-group">
+                        {% render_field field class="form-control" %}
+                    </div>
+                    {% endfor %}
+
+                    <input type="submit" class="btn btn-info" value="Add reply">
+                </form>
+            </div>
+        </div>
+
+
+    </article>
+
+
+
+    {% empty %}
+    <h4 class="mb-4">No comments here yet. Be the first one to comment.</h4>
+    {% endfor %}
+
+    <form action="{% url 'comment_create' post.id %}" method="post">
+        {% csrf_token %}
+        <legend>Add a comment</legend>
+
+        {% for field in comment_form %}
+        {% for error in field.errors  %}
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{error}}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        {% endfor %}
+        {% endfor %}
+
+        {% for field in comment_form  %}
+        <div class="form-group">
+            {% render_field field class="form-control" %}
+        </div>
+        {% endfor %}
+
+        <input type="submit" class="btn btn-info" value="Add comment">
+    </form>
+
+</div>
+
 {% endblock content %}
