@@ -1,0 +1,38 @@
+{% extends "accounts/template.html" %}
+{% load widget_tweaks %}
+
+
+{% block content %}
+    <form action="" method="post">
+        {% csrf_token %}
+        <legend>Create a post</legend>
+
+        
+        {% for field in form %}        
+            {% for error in field.errors  %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    {{error}}
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>    
+            {% endfor %}  
+        {% endfor %}
+            
+        
+        {% for field in form  %}
+            <div class="form-group">
+                {{field.label_tag}}<br>
+                {% render_field field class="form-control" %}
+            </div>
+        {% endfor %}
+        
+        {% if title|capfirst == 'Create' %}         
+            <input type="submit" class="btn btn-info" value="Create"> 
+        {% else %}
+            <input type="submit" class="btn btn-info" value="Update">           
+        {% endif %}
+    </form>
+    
+{% endblock content %}
+    
