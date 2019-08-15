@@ -12,6 +12,8 @@ from .forms import UserRegistrationForm, UserUpdateForm, UserProfileForm
 from .tokens import account_activation_token
 from .models import Profile
 
+from post.models import Post
+
 
 def register(request):
     title = 'registration'
@@ -60,10 +62,10 @@ def register(request):
 
 def profile(request, username):
     users_profile = get_object_or_404(User, username=username)
+    posts = Post.objects.filter(user=users_profile).order_by('-created_at')
     title = 'profile'
     return render(request, 'accounts/profile.html', locals())
 
-#TODO make value for form fields to be the initial data if form.is_valid fails
 @login_required
 def profile_update(request):
     title = 'profile'

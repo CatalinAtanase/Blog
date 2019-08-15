@@ -50,4 +50,42 @@ class Reply(models.Model):
     def get_absolute_url(self):
         return reverse('post_detail', kwargs={'pk': self.comment.post.pk})
 
+
+class Favorite(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='user_favorites')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='post_favorites')
+
+    class Meta:
+        unique_together = ['user', 'post']
+
+
+class PostLike(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='users_who_liked_post')
+    post = models.ForeignKey(Post, on_delete=models.CASCADE, related_name='post_liked')
+
+
+    class Meta:
+        unique_together = ['user', 'post']
+        verbose_name_plural = 'Post likes'
+        verbose_name = 'Post like'
+
+
+class CommentLike(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='users_who_liked_comment')
+    comment = models.ForeignKey(Comment, on_delete=models.CASCADE, related_name='comment_liked')
+
+    class Meta:
+        unique_together = ['user', 'comment']
+        verbose_name_plural = 'Comment likes'
+        verbose_name = 'Comment like'
+
+
+class ReplyLike(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='users_who_liked_reply')
+    reply = models.ForeignKey(Reply, on_delete=models.CASCADE, related_name='reply_liked')
+
     
+    class Meta:
+        unique_together = ['user', 'reply']
+        verbose_name = 'Reply Like'
+        verbose_name_plural = 'Reply likes'

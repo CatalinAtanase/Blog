@@ -1,5 +1,13 @@
 from django import forms
-from .models import Post, Comment, Reply
+from .models import (
+    Post,
+    Comment,
+    Reply, 
+    Favorite,
+    PostLike,
+    CommentLike,
+    ReplyLike
+)
 
 
 class CommentForm(forms.ModelForm):
@@ -30,3 +38,32 @@ class ReplyForm(forms.ModelForm):
     class Meta:
         model = Reply
         fields = ('body',)
+
+
+class FavoriteForm(forms.ModelForm):
+
+    class Meta:
+        fields = ()
+        model = Favorite
+
+
+class PostLikeForm(forms.ModelForm):
+
+    class Meta:
+        fields = ()
+        model = PostLike
+
+
+        
+class CommentLikeForm(forms.ModelForm):
+
+    class Meta:
+        fields = ()
+        model = CommentLike
+
+
+class ReplyLikeForm(forms.ModelForm):
+
+    class Meta:
+        fields = ()
+        model = ReplyLike

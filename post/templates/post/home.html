@@ -12,9 +12,44 @@
             </div>
             <h2><a class="article-title" href="{% url 'post_detail' post.id %}">{{ post.title }}</a></h2>
             <p class="article-content">{{ post.description|capfirst }}</p>
+            {% if user.is_authenticated %}
+                <form action="" class='like_post' method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="postid" value="{{post.id}}">
+                    <input class="btn btn-info" type="submit" value="{{ post.post_liked.count }} like{{ post.post_liked.count|pluralize }}">
+                </form>
+            {% else %}
+                <div class="btn btn-info">{{ post.post_liked.count }} like{{ post.post_liked.count|pluralize }}</div>
+            {% endif %} 
         </div>
     </article>
 {% endfor %}
+
+{% if user.is_authenticated %}
+<script>
+    // Like the post
+    const forms = document.querySelectorAll('.like_post')
+
+    // for each form prevent the default and make an ajax req 
+    forms.forEach(form => {
+        form.addEventListener('submit', e => {
+            e.preventDefault()
+
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'toggle_like_post' %}",
+                data: {
+                    post: form.firstElementChild.nextElementSibling.value,
+                    csrfmiddlewaretoken: form.firstElementChild.value,
+                },
+                success: (response) => {
+                    form.lastElementChild.value = `${response}`
+                }
+            })
+        })
+    })
+</script>
+{% endif %}
 
 {% endblock content %}       
     

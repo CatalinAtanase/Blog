@@ -11,4 +11,18 @@
         </div>
     </div>
 </div>
+
+
+{% for post in posts %}
+    <article class="media content-section">
+        <div class="media-body">
+            <div class="article-metadata">
+                <small class="text-muted">{{ post.created_at|date:'F d Y' }}</small>
+            </div>
+            <h2><a class="article-title" href="{% url 'post_detail' post.id %}">{{ post.title }}</a></h2>
+            <p class="article-content">{{ post.description|capfirst }}</p>
+        </div>
+    </article>
+{% endfor %}
+    
 {% endblock content %}

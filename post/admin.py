@@ -1,5 +1,12 @@
 from django.contrib import admin
-from .models import Post, Comment, Reply
+from .models import (
+    Post, 
+    Comment, 
+    Reply, 
+    Favorite,
+    PostLike,
+    CommentLike,
+)
 
 # Register your models here.
 @admin.register(Post)
@@ -20,4 +27,16 @@ class ReplyAdmin(admin.ModelAdmin):
     readonly_fields = ('created_at', 'updated_at')
 
 
+@admin.register(Favorite)
+class FavoriteAdmin(admin.ModelAdmin):
+    list_display = ['user', 'post']
 
+
+@admin.register(PostLike)
+class PostLikeAdmin(admin.ModelAdmin):
+    list_display = ['user', 'post',]
+
+
+@admin.register(CommentLike)
+class CommentLikeAdmin(admin.ModelAdmin):
+    list_display = ['user', 'comment',]

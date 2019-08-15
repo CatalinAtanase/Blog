@@ -5,8 +5,28 @@
 <article class="media content-section">
     <div class="media-body">
         <div class="article-metadata">
-            <a href="{% url 'profile' post.user.username %}" class="mr-2">{{ post.user.username }}</a>
-            <small class="text-muted">{{ post.updated_at|date:'F d Y' }}</small>
+            <div class="details" style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <a href="{% url 'profile' post.user.username %}" class="mr-2">{{ post.user.username }}</a>
+                    <small class="text-muted">{{ post.updated_at|date:'F d Y' }}</small>
+                </div>
+                {% if user.is_authenticated %}
+                    {% if is_favorite %}
+                        <form action="{% url 'favorite_delete' is_favorite.id %}" method="post" style="display: inline-block;">
+                            {% csrf_token %}
+                            <input type="submit" class="btn btn-danger" value="Remove from favorites">
+                        </form>
+                    {% else %}
+                        <form action="{% url 'favorite_create' post.id %}" method="post" style="display: inline-block;">
+                            {% csrf_token %}
+                            <input type="submit" class="btn btn-info" value="Add to favorites">
+                        </form>
+                    {% endif %}
+                {% endif %}
+                
+                
+            </div>
+           
             {% if post.user == user %}
             <div>
                 <a class="btn btn-secondary btn-sm mt-1 mb-1" href="{% url 'post_update' post.id %}">Update</a>
@@ -22,7 +42,7 @@
 <div id="comments">
 
     <h2>Comments:</h2>
-    {% for comment in post.comments_post.all reversed %}
+    {% for comment in post.comments_post.all %}
     <article class="media content-section mt-2">
         <div class="media-body">
             <div class="article-metadata">
@@ -42,6 +62,16 @@
                 </div>
             </div>
             <p class="article-content">{{ comment.body }}</p>
+            {% if user.is_authenticated %}
+                <form action="" class='toggle_like_comment' method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="commentid" value="{{comment.id}}">
+                    <input class="btn btn-info" type="submit" value="{{ comment.comment_liked.count }} like{{ comment.comment_liked.count|pluralize }}">
+                </form>
+            {% else %}
+                <div class="btn btn-info">{{ comment.comment_liked.count }} like{{ comment.comment_liked.count|pluralize }}</div>
+            {% endif %}
+                    
             <div class="replies-container mt-4">
                 {% for reply in comment.reply_comments.all %}
                 <article class="media content-section mt-2">
@@ -128,5 +158,29 @@
     </form>
 
 </div>
+
+{% if user.is_authenticated %}
+<script>
+    const forms = document.querySelectorAll('.toggle_like_comment')
+
+    forms.forEach(form => {
+        form.addEventListener('submit', e => {
+            e.preventDefault()
+
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'toggle_like_comment' %}",
+                data: {
+                    comment: form.firstElementChild.nextElementSibling.value,
+                    csrfmiddlewaretoken: form.firstElementChild.value
+                },
+                success: (response) => {
+                    form.lastElementChild.value = `${response}`
+                }
+            })
+        })
+    })
+</script>
+{% endif %}
 
 {% endblock content %}
